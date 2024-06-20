@@ -1,0 +1,22 @@
+{
+  "scripts": {
+    "build": "npx tsc && cp -r ./credentials ./dist || Copy-Item ./credentials ./dist -Recurse",
+    "start": "node dist/app.js",
+    "dev": "tsx app.ts"
+  },
+  "dependencies": {
+    "@google-cloud/speech": "^6.6.0",
+    "@google-cloud/storage": "^7.11.2",
+    "dotenv": "^16.4.5",
+    "fluent-ffmpeg": "^2.1.3",
+    "ngrok": "^5.0.0-beta.2",
+    "node-media-server": "^2.7.0",
+    "tsc": "^2.0.4",
+    "tsx": "^4.15.6",
+    "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.24",
+    "@types/node-media-server": "^2.3.6"
+  }
+}

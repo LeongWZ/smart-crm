@@ -1,0 +1,8 @@
+services:
+  node:
+    build: .
+    entrypoint: ./docker-node.sh
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app:z
