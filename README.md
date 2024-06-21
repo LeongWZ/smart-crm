@@ -13,24 +13,18 @@ Real-time speech-to-text transciption on Zoom using Google Cloud API.
 
 1. Copy .env.example to .env
 
-        ```bash
         cp ./.env.example ./.env
-        ```
 
 2. On .env file, replace `GOOGLE_APPLICATION_CREDENTIALS` and `NGROK_TOKEN` environment variables accordingly
 
 3. Use docker-compose to build the container
 
-        ```bash
         docker-compose build
-        ```
 
 ## Run
 1. Run the program using docker-compose
 
-        ```bash
         docker-compose up
-        ```
 
     - You will be given the configuration details for zoom upon running the program, for example:
 
