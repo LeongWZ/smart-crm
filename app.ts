@@ -19,13 +19,11 @@ connectToNgrok()
   })
 
 nms.on("postConnect", (id, streamPath, args) => {
-  const startTranscription = transcription("START") as () => void;
-  startTranscription();
+  transcription("START")(id);
 })
 
 nms.on("doneConnect", (id, streamPath, args) => {
-  const stopTranscription = transcription("STOP") as () => void;
-  stopTranscription();
+  transcription("STOP")(id);
 })
 
 function printStreamDetails(streamingUrl: string, liveStreamingPageUrl: string) {

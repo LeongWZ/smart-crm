@@ -1,8 +1,10 @@
-import nms from "../nms/client";
 import transcribe from "./transcribe";
+import { GOOGLE_SPEECH_API_TIMEOUT } from "./transcribe";
 
 export default function useTranscription() {
     let isStreaming: boolean = false;
+
+    let streamingId: string | null = null;
     
     let streamingUrl: string = "";
   
@@ -14,7 +16,7 @@ export default function useTranscription() {
       streamingUrl = url;
     }
   
-    const startTranscription = () => {
+    const startTranscription = (id: string) => {
       if (isStreaming) {
         return;
       }
@@ -23,27 +25,37 @@ export default function useTranscription() {
         console.error("Please provide a url for the stream.\n");
         return;
       }
-      
+
+      console.log("\nStarting transcription...");
+
+      streamingId = id;
       isStreaming = true;
-  
-      try {
-        transcribe(streamingUrl);
-      } catch (exception) {
-        console.error(exception);
-        nms.stop();
-        console.log("\nProgram stopped. Press Ctrl+C to exit.\n");
+
+      const loopTranscribe = () => {
+        if (isStreaming && streamingId === id) {
+          try {
+            transcribe(streamingUrl);
+            setTimeout(loopTranscribe, GOOGLE_SPEECH_API_TIMEOUT * 1000); // convert to ms
+          } catch (exception) {
+            console.error(exception);
+            stopTranscription(streamingId);
+          }
+        }
       }
+  
+      loopTranscribe();
     }
   
-    const stopTranscription = () => {
-      if (!isStreaming) {
+    const stopTranscription = (id: string) => {
+      if (!isStreaming || streamingId !== id) {
         return;
       }
       isStreaming = false;
+      streamingId = null;
       console.log("\nTranscription stopped");
     }
   
-    const dispatchAction = (actionType: "START" | "SET_URL" | "STOP") => {
+    const dispatchAction = (actionType: "START" | "STOP" | "SET_URL") => {
       switch (actionType) {
         case "START":
           return startTranscription
