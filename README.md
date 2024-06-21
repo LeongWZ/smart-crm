@@ -4,10 +4,11 @@ Real-time speech-to-text transciption on Zoom using Google Cloud API.
 
 ## Prerequisites
 
-1. Sign up for Google Cloud API account and enable Speech-To-Text API.
-2. Generate service account on Google Cloud API for access credentials
-3. Sign up for Ngrok account and retrieve Ngrok token.
-4. Install docker and docker-compose
+1. Have a Pro, Business, Education, or Enterprise account on Zoom.
+2. Sign up for Google Cloud API account and enable Speech-To-Text API.
+3. Generate service account on Google Cloud API for access credentials
+4. Sign up for Ngrok account and retrieve Ngrok token.
+5. Install docker and docker-compose
 
 ## Installation
 
