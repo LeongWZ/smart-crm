@@ -41,9 +41,7 @@ Real-time speech-to-text transciption on Zoom using Google Cloud API.
         Live streaming page URL: https://ANOTHER_URL
         ```
 
-2. Start the meeting/webinar as the host, by doing one of the following:
-    - From your calendar: If you have added the meeting/webinar to your calendar, click the link displayed on your calendar reminder.
-    - From the Zoom website: Sign in to Zoom, find the meeting or webinar on the Meetings or  Webinars page, and click Start.
+2. Start the meeting/webinar on Zoom as the host.
 
 3. Click the More button in the host controls.
 
