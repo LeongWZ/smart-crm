@@ -6,3 +6,5 @@ services:
       - "3000:3000"
     volumes:
       - .:/app:z
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

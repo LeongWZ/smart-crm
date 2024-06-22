@@ -1,5 +1,6 @@
 import ffmpeg from "fluent-ffmpeg";
 import speech from "@google-cloud/speech";
+import { fetchPostBackend } from "../api/fetchPostBackend";
 
 const client = new speech.SpeechClient();
 
@@ -10,6 +11,61 @@ const encoding = "LINEAR16";
 const sampleRateHertz = 16000;
 const languageCode = "en-US";
 
+type WordInfo = {
+    startTime: string;
+    endTime: string;
+    word: string;
+    speakerTag?: number;
+}
+  
+type Alternative = {
+    transcript: string;
+    confidence: number;
+    words?: WordInfo[];
+}
+  
+type Result = {
+    alternatives: Alternative[];
+}
+  
+type LongRunningRecognizeResponse  = {
+    results: Result[];
+}
+
+function onData(data: LongRunningRecognizeResponse) {
+    const transcription = data.results
+        .map(result => result.alternatives[0].transcript)
+        .join('\n');
+
+    if (!transcription) {
+        console.log('\n\nReached transcription time limit, press Ctrl+C\n');
+    }
+
+    console.log(`Transcription: ${transcription}\n`);
+
+    const result = data.results[data.results.length - 1];
+    const wordsInfo = result.alternatives[0].words;
+    // Note: The transcript within each result is separate and sequential per result.
+    // However, the words list within an alternative includes all the words
+    // from all the results thus far. Thus, to get all the words with speaker
+    // tags, you only have to take the words list from the last result
+
+    const firstSpeakerDialogue = wordsInfo?.filter(a => a.speakerTag === 1)
+        .map(a => a.word)
+        .join(" ");
+    const secondSpeakerDialogue = wordsInfo?.filter(a => a.speakerTag === 2)
+        .map(a => a.word)
+        .join(" ");
+    
+    fetchPostBackend({
+        transcript: transcription,
+        dialogues: [
+            { speakerTag: 1, content: firstSpeakerDialogue ?? ""},
+            { speakerTag: 2, content: secondSpeakerDialogue ?? ""}
+        ]
+    });
+}
+
 // Stream the audio to the Google Cloud Speech API
 const launchRecognizeStream = () => client
     .streamingRecognize({
@@ -17,17 +73,17 @@ const launchRecognizeStream = () => client
             encoding: encoding,
             sampleRateHertz: sampleRateHertz,
             languageCode: languageCode,
+            diarizationConfig: {
+                enableSpeakerDiarization: true,
+                minSpeakerCount: 2,
+                maxSpeakerCount: 2,
+            },
+            model: "video"
         },
         interimResults: false, // If you want interim results, set this to true
     })
-    .on('error', error => console.error)
-    .on('data', data => {
-        console.log(
-            data.results[0] && data.results[0].alternatives[0]
-                ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
-                : '\n\nReached transcription time limit, press Ctrl+C\n'
-        );
-    });
+    .on('error', console.error)
+    .on('data', onData);
 
 export default function transcribe(rtmpUrl: string) {
     ffmpeg(rtmpUrl, { timeout: GOOGLE_SPEECH_API_TIMEOUT })
