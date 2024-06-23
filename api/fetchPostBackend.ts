@@ -8,19 +8,26 @@ type PostData = {
     dialogues: Dialogue[],
 }
 
-const API_ENDPOINT = "http://host.docker.internal:8000";
+export async function fetchPostBackend(email: string, data: PostData) {
+    const url = `http://host.docker.internal:8000/?api_key=${process.env.BACKEND_API_KEY}`;
 
-export async function fetchPostBackend(data: PostData) {
-    fetch(API_ENDPOINT, {
+    return fetch(url, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
             ...data,
-            api_key: process.env.BACKEND_API_KEY
+            email: email
         })
     })
-        .then(response => response.json())
-        .then(result => console.log(`\n${JSON.stringify(result)}\n`));
+        .then(async response => {
+            const result = await response.json();
+
+            if (response.status === 404) {
+                throw new Error(result["detail"])
+            }
+
+            return result
+        });
 }

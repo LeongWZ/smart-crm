@@ -1,6 +1,8 @@
 services:
   node:
     build: .
+    tty: true
+    stdin_open: true
     entrypoint: ./docker-node.sh
     ports:
       - "3000:3000"

@@ -11,7 +11,7 @@ const config = {
         ping_timeout: 60
     },
     http: {
-        port: 8000,
+        port: 8443,
         allow_origin: '*',
         mediaroot: "./media"
     }

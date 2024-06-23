@@ -12,7 +12,7 @@ export default async function connectToNgrok(): Promise<[string, string]> {
             ngrok.connect({
                 authtoken: token,
                 proto: "http",
-                addr: 8000
+                addr: 8443
             })
         ]
     ).then(([streamingUrl, liveStreamingPageUrl]: [string, string]) => 

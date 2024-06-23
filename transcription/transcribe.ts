@@ -28,47 +28,14 @@ type Result = {
     alternatives: Alternative[];
 }
   
-type LongRunningRecognizeResponse  = {
+export type LongRunningRecognizeResponse  = {
     results: Result[];
 }
 
-function onData(data: LongRunningRecognizeResponse) {
-    const transcription = data.results
-        .map(result => result.alternatives[0].transcript)
-        .join('\n');
-
-    if (!transcription) {
-        console.log('\n\nReached transcription time limit, press Ctrl+C\n');
-    }
-
-    console.log(`Transcription: ${transcription}\n`);
-
-    const result = data.results[data.results.length - 1];
-    const wordsInfo = result.alternatives[0].words;
-    // Note: The transcript within each result is separate and sequential per result.
-    // However, the words list within an alternative includes all the words
-    // from all the results thus far. Thus, to get all the words with speaker
-    // tags, you only have to take the words list from the last result
-
-    const firstSpeakerDialogue = wordsInfo?.filter(a => a.speakerTag === 1)
-        .map(a => a.word)
-        .join(" ");
-    const secondSpeakerDialogue = wordsInfo?.filter(a => a.speakerTag === 2)
-        .map(a => a.word)
-        .join(" ");
-    
-    fetchPostBackend({
-        transcript: transcription,
-        dialogues: [
-            { speakerTag: 1, content: firstSpeakerDialogue ?? ""},
-            { speakerTag: 2, content: secondSpeakerDialogue ?? ""}
-        ]
-    });
-}
 
 // Stream the audio to the Google Cloud Speech API
-const launchRecognizeStream = () => client
-    .streamingRecognize({
+function launchRecognizeStream(onData: (data: LongRunningRecognizeResponse) => void) {
+    return client.streamingRecognize({
         config: {
             encoding: encoding,
             sampleRateHertz: sampleRateHertz,
@@ -84,8 +51,9 @@ const launchRecognizeStream = () => client
     })
     .on('error', console.error)
     .on('data', onData);
+}
 
-export default function transcribe(rtmpUrl: string) {
+export default function transcribe(rtmpUrl: string, onData: (data: LongRunningRecognizeResponse) => void) {
     ffmpeg(rtmpUrl, { timeout: GOOGLE_SPEECH_API_TIMEOUT })
         .on('start', function (commandLine) {
             console.log(`\nSpawned Ffmpeg with command: ${commandLine}\n`);
@@ -104,5 +72,5 @@ export default function transcribe(rtmpUrl: string) {
             }
         })
         .on('end', () => console.log('\nProcessing finished!\n'))
-        .pipe(launchRecognizeStream(), { end: true }); // Pipe the audio stream to recognizeStream
+        .pipe(launchRecognizeStream(onData), { end: true }); // Pipe the audio stream to recognizeStream
 }
