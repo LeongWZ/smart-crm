@@ -11,18 +11,38 @@ dotenv.config();
 
 nms.run();
 
-const loopTranscribe = (email: string) => {
-  transcribe(
-    `${streamingUrl}/${email}`,
-    (email => data => onData(data, email))(email) // currying
-  );
-  setTimeout(loopTranscribe, 305 * 1000); // convert to ms
-}
-
 nms.on("postPublish", (id, streamPath, args) => {
   console.log(nms.getSession(id));
   const email = streamPath.split("/").pop() ?? "";
-  loopTranscribe(email);
+  
+  let isStreaming: boolean = true;
+
+  const loopTranscribe = () => {
+    if (!isStreaming) {
+      return;
+    };
+
+    transcribe(
+      `${streamingUrl}/${email}`,
+      (email => data => onData(data, email))(email) // currying
+    )
+      .on('error', err => {
+          isStreaming = false;
+          const message: string = err.message;
+          if (!message.includes("Output stream error: Exceeded maximum allowed stream duration of 305 seconds.") &&
+              !message.includes("process ran into a timeout")) {
+              console.error(`\nAn error occurred: ${message}\n`)
+          }
+      })
+      .on('end', () => {
+        isStreaming = false;
+        console.log('\nProcessing finished!\n')
+      });
+
+    setTimeout(loopTranscribe, 305 * 1000); // convert to ms
+  }
+
+  loopTranscribe();
 })
 
 connectToNgrok().then(console.log);

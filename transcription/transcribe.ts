@@ -60,7 +60,7 @@ function launchRecognizeStream(onData: (data: LongRunningRecognizeResponse) => v
 }
 
 export default function transcribe(rtmpUrl: string, onData: (data: LongRunningRecognizeResponse) => void) {
-    ffmpeg(rtmpUrl, { timeout: GOOGLE_SPEECH_API_TIMEOUT })
+    return ffmpeg(rtmpUrl, { timeout: GOOGLE_SPEECH_API_TIMEOUT })
         .on('start', function (commandLine) {
             console.log(`\nSpawned Ffmpeg with command: ${commandLine}\n`);
         })
@@ -69,14 +69,5 @@ export default function transcribe(rtmpUrl: string, onData: (data: LongRunningRe
         .format('s16le')
         .audioFrequency(sampleRateHertz)
         .audioChannels(1)
-        .on("data", data => console.log)
-        .on('error', err => {
-            const message: string = err.message;
-            if (!message.includes("Output stream error: Exceeded maximum allowed stream duration of 305 seconds.") &&
-                !message.includes("process ran into a timeout")) {
-                console.error(`\nAn error occurred: ${message}\n`)
-            }
-        })
-        .on('end', () => console.log('\nProcessing finished!\n'))
         .pipe(launchRecognizeStream(onData), { end: true }); // Pipe the audio stream to recognizeStream
 }
