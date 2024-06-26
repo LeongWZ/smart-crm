@@ -3,7 +3,7 @@ import connectToNgrok from "./ngrok/connect";
 import nms from "./nms/client";
 import useTranscription from "./transcription/useTranscription";
 import prompts from "prompts";
-import { fetchPostBackend } from "./api/fetchPostBackend";
+import { validateEmail } from "./api/validateEmail";
 
 console.log("Press Ctrl+C to exit the program\n");
 
@@ -41,15 +41,9 @@ function printStreamDetails(streamingUrl: string, liveStreamingPageUrl: string) 
 
 async function promptEmail() {
 
-  const validateEmail = async (email: string) => {
+  const validate = async (email: string) => {
     try {
-      await fetchPostBackend(
-        email,
-        {
-          transcript: "Successfully connected to smart-crm",
-          dialogues: []
-        }
-      );
+      await validateEmail(email);
     } catch (error) {
       if (error instanceof Error) {
         return error.message;
@@ -65,6 +59,6 @@ async function promptEmail() {
     type: 'text',
     name: 'email',
     message: 'Email used on your Lark account',
-    validate: async email => await validateEmail(email)
+    validate: validate
   });
 }

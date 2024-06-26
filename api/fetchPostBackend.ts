@@ -1,14 +1,16 @@
-type Dialogue = {
-    speakerTag: number,
-    content: string
+export type Transcript = {
+    speakerTag?: number;
+    startTime: string;
+    endTime: string;
+    content: string;
 }
 
-type PostData = {
-    transcript: string,
-    dialogues: Dialogue[],
+export type PostData = {
+    email: string;
+    transcripts: Transcript[],
 }
 
-export async function fetchPostBackend(email: string, data: PostData) {
+export async function fetchPostBackend(data: PostData) {
     const url = `http://host.docker.internal:8000/?api_key=${process.env.BACKEND_API_KEY}`;
 
     return fetch(url, {
@@ -16,10 +18,7 @@ export async function fetchPostBackend(email: string, data: PostData) {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-            ...data,
-            email: email
-        })
+        body: JSON.stringify(data)
     })
         .then(async response => {
             const result = await response.json();

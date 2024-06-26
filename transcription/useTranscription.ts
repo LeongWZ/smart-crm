@@ -1,6 +1,6 @@
-import transcribe from "./transcribe";
+import transcribe, { WordInfo } from "./transcribe";
 import { GOOGLE_SPEECH_API_TIMEOUT } from "./transcribe";
-import { fetchPostBackend } from "../api/fetchPostBackend";
+import { Transcript, fetchPostBackend } from "../api/fetchPostBackend";
 import { LongRunningRecognizeResponse } from "./transcribe";
 
 export default function useTranscription() {
@@ -39,8 +39,6 @@ export default function useTranscription() {
       return;
     }
 
-    console.log("\nStarting transcription...");
-
     streamingId = id;
     isStreaming = true;
 
@@ -68,7 +66,6 @@ export default function useTranscription() {
     }
     isStreaming = false;
     streamingId = null;
-    console.log("\nTranscription stopped");
   }
 
   const dispatchAction = (actionType: "START" | "STOP" | "SET_URL" | "SET_EMAIL" ) => {
@@ -90,35 +87,72 @@ export default function useTranscription() {
 }
 
 function onData(data: LongRunningRecognizeResponse, email: string) {
-  const transcription = data.results
-    .map(result => result.alternatives[0].transcript)
-    .join('\n');
 
-  if (!transcription) {
-    console.log('\n\nReached transcription time limit, press Ctrl+C\n');
+  const latestTranscriptWordCount = data.results
+    .flatMap(result => result.alternatives[0].transcript.split(" "))
+    .length
+
+  if (latestTranscriptWordCount === 0) {
+      console.log('\n\nReached transcription time limit, press Ctrl+C\n');
   }
 
-  console.log(`Transcription: ${transcription}\n`);
-
   const result = data.results[data.results.length - 1];
-  const wordsInfo = result.alternatives[0].words;
+  const wordsInfo = result.alternatives[0].words ?? [];
   // Note: The transcript within each result is separate and sequential per result.
   // However, the words list within an alternative includes all the words
   // from all the results thus far. Thus, to get all the words with speaker
   // tags, you only have to take the words list from the last result
 
-  const firstSpeakerDialogue = wordsInfo?.filter(a => a.speakerTag === 1)
-    .map(a => a.word)
-    .join(" ");
-  const secondSpeakerDialogue = wordsInfo?.filter(a => a.speakerTag === 2)
-    .map(a => a.word)
-    .join(" ");
+  if (latestTranscriptWordCount >= 5) {
+    fetchPostBackend({
+      email: email,
+      transcripts: getTranscriptsWithTimestamp(wordsInfo)
+    });
+  }
+}
 
-  fetchPostBackend(email, {
-    transcript: transcription,
-    dialogues: [
-      { speakerTag: 1, content: firstSpeakerDialogue ?? "" },
-      { speakerTag: 2, content: secondSpeakerDialogue ?? "" }
-    ]
-  });
+function getTranscriptsWithTimestamp(wordsInfo: WordInfo[]): Transcript[] {
+  const groupWordInfoBySentence = wordsInfo.reduce(
+    (acc: WordInfo[][], wordInfo: WordInfo) => {
+      const arr = acc.at(-1);
+      
+      if (arr === undefined) {
+        acc.push([ wordInfo ])
+        return acc;
+      }
+
+      const prevSpeakerTag = arr.at(-1)?.speakerTag
+      
+      if (prevSpeakerTag === undefined || prevSpeakerTag === wordInfo.speakerTag) {
+        arr.push(wordInfo)
+      } else {
+        acc.push([ wordInfo ])
+      }
+      
+      return acc
+    },
+    []
+  );
+  
+  return groupWordInfoBySentence.map(sentence => (
+    {
+      speakerTag: sentence[0].speakerTag,
+      startTime: convertToHms(sentence[0].startTime.seconds),
+      endTime: convertToHms(sentence[sentence.length - 1].endTime.seconds),
+      content: sentence.map(wordInfo => wordInfo.word).join(" ")
+    }
+  ));
+}
+
+function convertToHms(timeInSeconds: number) {
+  let time = timeInSeconds
+  const hmsArr = []
+
+  for (let i = 0; i < 2; i += 1) {
+    hmsArr.push(time % 60);
+    time = Math.floor(time / 60);
+  }
+
+  hmsArr.push(time);
+  return hmsArr.reverse().join(":");
 }

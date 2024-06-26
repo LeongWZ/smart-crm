@@ -11,9 +11,14 @@ const encoding = "LINEAR16";
 const sampleRateHertz = 16000;
 const languageCode = "en-US";
 
-type WordInfo = {
-    startTime: string;
-    endTime: string;
+type Duration = {
+    seconds: number;
+    nanos: number
+}
+
+export type WordInfo = {
+    startTime: Duration;
+    endTime: Duration;
     word: string;
     speakerTag?: number;
 }
@@ -40,6 +45,7 @@ function launchRecognizeStream(onData: (data: LongRunningRecognizeResponse) => v
             encoding: encoding,
             sampleRateHertz: sampleRateHertz,
             languageCode: languageCode,
+            enableWordTimeOffsets: true,
             diarizationConfig: {
                 enableSpeakerDiarization: true,
                 minSpeakerCount: 2,
