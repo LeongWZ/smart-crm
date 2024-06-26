@@ -27,21 +27,14 @@ Real-time speech-to-text transciption on Zoom using Google Cloud API.
 ## Run
 1. Run the program using docker compose
 
-        docker compose run node
+        docker compose up
 
-    - You will be given the configuration details for zoom upon running the program, for example:
+2. Go to http://localhost:3000 and enter your email used on lark account for configuration details
 
-        ```bash
-        Configuration for Zoom
-        Streaming URL: rtmp://SOME_URL
-        Streaming key: SOME_KEY
-        Live streaming page URL: https://ANOTHER_URL
-        ```
+3. Start the meeting/webinar on Zoom as the host.
 
-2. Start the meeting/webinar on Zoom as the host.
+4. Click the More button in the host controls.
 
-3. Click the More button in the host controls.
-
-4. Choose Live on Custom Live Stream Service.
+5. Choose Live on Custom Live Stream Service.
     - If the organizer configured this webinar for live custom streaming, a browser window opens that shows the progress as Zoom prepares the livestream of your webinar.
     - If the organizer did not set up this webinar for live custom streaming, you must enter the values provided in the configuration details.
