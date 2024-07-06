@@ -54,7 +54,7 @@ const app: Express = express();
 
 app.set('views', './public/views');
 app.set('view engine', 'ejs');
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req: Request, res: Response) => {
   res.render("index", {

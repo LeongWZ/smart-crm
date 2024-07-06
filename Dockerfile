@@ -8,10 +8,15 @@ RUN apk update
 RUN apk upgrade
 RUN apk add --no-cache ffmpeg
 
-RUN npm install
+RUN npm install\
+    && npm install typescript
 
 COPY . .
 
 RUN chmod +x ./docker-node.sh
 
-CMD ["npm","run","dev"]
+RUN npm run build
+
+EXPOSE 3000
+
+CMD ["npm","start"]
