@@ -17,7 +17,7 @@ Real-time speech-to-text transciption on Zoom using Google Cloud API.
         cp ./.env.example ./.env
 
 2. On .env file, replace `GOOGLE_APPLICATION_CREDENTIALS` and `NGROK_TOKEN` environment variables accordingly.
-     - Replace `GOOGLE_APPLICATION_CREDENTIALS` with the path to your credentials file e.g. `./credentials/credentials.json`
+     - Replace `GOOGLE_APPLICATION_CREDENTIALS` with the path to your credentials file e.g. `some/path/to/credentials.json`
      - Replace `NGROK_TOKEN` with the ngrok token generated from ngrok dashboard website
 
 4. Use docker compose to build the container
