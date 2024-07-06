@@ -15,10 +15,6 @@ COPY . .
 
 RUN chmod +x ./docker-node.sh
 
-RUN mkdir -p ./credentials
-
-RUN echo $GOOGLE_CREDENTIALS_BASE64 | base64 -d > ./credentials/smart-crm-426916-ee647f5674f9.json
-
 RUN npm run build
 
 CMD ["npm","start"]
