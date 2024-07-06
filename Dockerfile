@@ -21,6 +21,6 @@ RUN echo $GOOGLE_CREDENTIALS_BASE64 | base64 -d > ./credentials/smart-crm-426916
 
 RUN npm run build
 
-EXPOSE 3000
+EXPOSE $PORT
 
 CMD ["npm","start"]
