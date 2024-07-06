@@ -10,7 +10,7 @@ export default function onData(data: LongRunningRecognizeResponse, email: string
     .length
 
   if (latestTranscriptWordCount === 0) {
-      console.log('\n\nReached transcription time limit, press Ctrl+C\n');
+    console.log('\n\nReached transcription time limit, press Ctrl+C\n');
   }
 
   const result = data.results[data.results.length - 1];

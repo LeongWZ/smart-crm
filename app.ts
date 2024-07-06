@@ -4,7 +4,7 @@ import connectToNgrok from "./ngrok/connect";
 import nms from "./nms/client";
 import onData from "./transcription/onData";
 import { validateEmail } from "./api/validateEmail";
-import transcribe from "./transcription/transcribe";
+import transcribe, { GOOGLE_SPEECH_API_TIMEOUT } from "./transcription/transcribe";
 
 
 dotenv.config();
@@ -12,7 +12,6 @@ dotenv.config();
 nms.run();
 
 nms.on("postPublish", (id, streamPath, args) => {
-  console.log(nms.getSession(id));
   const email = streamPath.split("/").pop() ?? "";
   
   let isStreaming: boolean = true;
@@ -24,12 +23,12 @@ nms.on("postPublish", (id, streamPath, args) => {
 
     transcribe(
       `${streamingUrl}/${email}`,
-      (email => data => onData(data, email))(email) // currying
+      data => onData(data, email)
     )
       .on('error', err => {
           isStreaming = false;
           const message: string = err.message;
-          if (!message.includes("Output stream error: Exceeded maximum allowed stream duration of 305 seconds.") &&
+          if (!message.includes("Exceeded maximum allowed stream duration of 305 seconds.") &&
               !message.includes("process ran into a timeout")) {
               console.error(`\nAn error occurred: ${message}\n`)
           }
@@ -39,16 +38,16 @@ nms.on("postPublish", (id, streamPath, args) => {
         console.log('\nProcessing finished!\n')
       });
 
-    setTimeout(loopTranscribe, 305 * 1000); // convert to ms
+    setTimeout(loopTranscribe, GOOGLE_SPEECH_API_TIMEOUT * 1000); // convert to ms
   }
 
   loopTranscribe();
 })
 
-connectToNgrok().then(console.log);
+connectToNgrok();
 
 const streamingUrl = `rtmp://${process.env.NGROK_RTMP_REMOTE_ADDR}/live`;
-const livestreamUrl = `https://${process.env.NGROK_SUBDOMAIN}/admin/streams`;
+const livestreamUrl = `https://${process.env.NGROK_SUBDOMAIN}.${process.env.NGROK_REGION}.ngrok.io/admin/streams`;
 
 
 const app: Express = express();

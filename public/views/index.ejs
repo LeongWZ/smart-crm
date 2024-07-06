@@ -1,44 +1,91 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
+<head>
+
     <head>
-        <head>
-            <!-- Required meta tags -->
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-        
-            <!-- Bootstrap CSS -->
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        
-            <title>Smart-crm</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+        <title>Smart-crm</title>
     </head>
 
-    <body>
-        <div class="container">
-            <h1 class="h1 py-3">smart-crm</h1>
-            <% if(streamingUrl){ %>
-                <h2>Streaming configuration for Zoom/Teams</h2>
-                <ul>
-                    <li>Streaming URL: <%= streamingUrl %></li>
-                    <li>Streaming key: <%= streamingKey %></li>
-                    <li>Live streaming page URL: <%= livestreamUrl %></li>
-                </ul>
-            <% } else { %>
-                <form action="/" method="post">
-                    <div class="mb-3">
-                        <label for="exampleInputEmail1" class="form-label">Email address</label>
-                        <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                        <div id="emailHelp" class="form-text">Please input the email you used on your Lark account.</div>
+<body>
+    <div class="container">
+        <h1 class="h1 py-3">smart-crm</h1>
+        <% if(streamingUrl){ %>
+            <h2>Streaming configuration for Zoom/Teams</h2>
+            <ul>
+                <li>Streaming URL: <%= streamingUrl %>
+                </li>
+                <li>Streaming key: <%= streamingKey %>
+                </li>
+                <li>Live streaming page URL: <%= livestreamUrl %>
+                </li>
+            </ul>
+        <% } else { %>
+            <form action="/" method="post">
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Email address</label>
+                    <input type="email" name="email" class="form-control" id="exampleInputEmail1"
+                        aria-describedby="emailHelp">
+                    <div id="emailHelp" class="form-text">Please input the email you used on your Lark account.
                     </div>
-                    <input type="submit" class="btn btn-primary" value="Submit">
-                    <% if(error){ %>
-                        <div class="alert alert-danger my-3" role="alert">
-                            <%= error %>
-                        </div>
-                    <% } %>
-                </form>
-            <% } %>
+                </div>
+                <input type="submit" class="btn btn-primary" value="Submit">
+                <% if(error){ %>
+                    <div class="alert alert-danger my-3" role="alert">
+                        <%= error %>
+                    </div>
+                <% } %>
+            </form>
+        <% } %>
+
+        <div class="my-5">
+            <h3>Guide</h3>
+            <div class="mt-3">
+                <h5>For Zoom</h5>
+                <ol>
+                    <li class="my-2">Enter your email used on lark account for configuration details</li>
+
+                    <li class="my-2">Start the meeting/webinar on Zoom as the host.</li>
+
+                    <li class="my-2">Click the More button in the host controls.</li>
+
+                    <li class="my-2">Choose Live on Custom Live Stream Service.
+                        <ul>
+                            <li>If the organizer configured this webinar for live custom streaming, a browser window
+                                opens that shows the progress as Zoom prepares the livestream of your webinar.</li>
+                            <li>If the organizer did not set up this webinar for live custom streaming, you must
+                                enter the values provided in the configuration details.</li>
+                        </ul>
+                    </li class="my-2">
+                </ol>
+            </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    </body>
+
+        <div class="mt-6 mb-4">
+            <h3>Credits</h3>
+            <span>Developed by whatisthis</span>
+            <div class="my-2">
+                <h5>Contributors</h5>
+                <ul>
+                    <li><a href="https://github.com/LeongWZ">@LeongWZ</a></li>
+                    <li><a href="https://github.com/donkey-king-kong">@donkey-king-kong</a></li>
+                    <li><a href="https://github.com/ruissouw">@ruissouw</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
 </html>

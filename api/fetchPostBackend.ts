@@ -11,7 +11,10 @@ export type PostData = {
 }
 
 export async function fetchPostBackend(data: PostData) {
-    const url = `http://host.docker.internal:8000/?api_key=${process.env.BACKEND_API_KEY}`;
+    // For development
+    //const url = `http://host.docker.internal:8000/?api_key=${process.env.BACKEND_API_KEY}`;
+    
+    const url = `https://smart-crm-backend-iodqf.ondigitalocean.app/?api_key=${process.env.BACKEND_API_KEY}`;
 
     return fetch(url, {
         method: "POST",

@@ -1,6 +1,6 @@
 import ffmpeg from "fluent-ffmpeg";
 import speech from "@google-cloud/speech";
-import { fetchPostBackend } from "../api/fetchPostBackend";
+import { ApiError } from "@google-cloud/storage";
 
 const client = new speech.SpeechClient();
 
@@ -55,15 +55,24 @@ function launchRecognizeStream(onData: (data: LongRunningRecognizeResponse) => v
         },
         interimResults: false, // If you want interim results, set this to true
     })
-    .on('error', console.error)
+    .on('error', (error) => {
+        if (error instanceof ApiError) {
+            if (error.message
+                .includes("Exceeded maximum allowed stream duration of 305 seconds.")
+            ) {
+                return;
+            }
+        }
+        console.error(error);
+    })
     .on('data', onData);
 }
 
 export default function transcribe(rtmpUrl: string, onData: (data: LongRunningRecognizeResponse) => void) {
     return ffmpeg(rtmpUrl, { timeout: GOOGLE_SPEECH_API_TIMEOUT })
-        .on('start', function (commandLine) {
-            console.log(`\nSpawned Ffmpeg with command: ${commandLine}\n`);
-        })
+        //.on('start', function (commandLine) {
+        //    console.log(`\nSpawned Ffmpeg with command: ${commandLine}\n`);
+        //})
         .noVideo() // Process only the audio stream
         .audioCodec('pcm_s16le')
         .format('s16le')
