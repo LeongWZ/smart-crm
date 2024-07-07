@@ -2,6 +2,13 @@ services:
   node:
     build: .
     entrypoint: ./docker-node.sh
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=./credentials/smart-crm-426916-ee647f5674f9.json
+      - BACKEND_API_KEY=9a5300f9-0f5e-429d-8210-cffaa78bced1
+      - NGROK_TOKEN=2i6egd3CNWZ6P9qbU8aqswXjDZG_5dsKHLgMoqdGUWtaAhh59
+      - NGROK_RTMP_REMOTE_ADDR=1.tcp.ap.ngrok.io:22745
+      - NGROK_SUBDOMAIN=smart-crm-stream
+      - NGROK_REGION=ap
     ports:
       - "3000:3000"
       - "8443:8443"
