@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "npx tsc",
+    "build": "npx tsc && cp -r ./credentials ./dist || Copy-Item ./credentials ./dist -Recurse",
     "start": "node dist/app.js",
     "dev": "tsx app.ts"
   },
