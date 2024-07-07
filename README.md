@@ -10,8 +10,9 @@ Real-time speech-to-text transciption on Zoom using Google Cloud API.
 ## Installation
 
 Use docker compose to build the container
-
-        docker compose build
+```bash
+docker compose build
+```
 
 ## Run
 1. Run the program using docker compose
