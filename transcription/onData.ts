@@ -66,10 +66,13 @@ function convertToHms(timeInSeconds: number) {
   const hmsArr = []
 
   for (let i = 0; i < 2; i += 1) {
-    hmsArr.push(time % 60);
+    hmsArr.push(Math.floor(time % 60));
     time = Math.floor(time / 60);
   }
 
   hmsArr.push(time);
-  return hmsArr.reverse().join(":");
+  return hmsArr
+    .reverse()
+    .map(time => time < 10 ? `0${time}` : `${time}`)
+    .join(":");
 }
