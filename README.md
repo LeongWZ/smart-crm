@@ -6,6 +6,7 @@ Real-time speech-to-text transciption on Zoom using Google Cloud API.
 
 1. Have a Pro, Business, Education, or Enterprise account on Zoom.
 2. Install docker and docker compose.
+3. Have a Lark account. Join this Lark organisation to have access to the bot <https://xfmuck6tn0q.sg.larksuite.com/invite/d39NMQoqtalg1?join=1&team_name=whatisthis>
 
 ## Installation
 
