@@ -49,6 +49,11 @@ connectToNgrok();
 const streamingUrl = `rtmp://${process.env.NGROK_RTMP_REMOTE_ADDR}/live`;
 const livestreamUrl = `https://${process.env.NGROK_SUBDOMAIN}.${process.env.NGROK_REGION}.ngrok.io/admin/streams`;
 
+/*
+For deployment
+const streamingUrl = `rtmp://167.172.84.17:1935/live`;
+const livestreamUrl = `http://167.172.84.17:8000/admin/streams`;
+*/
 
 const app: Express = express();
 
