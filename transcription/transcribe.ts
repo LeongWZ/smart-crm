@@ -51,7 +51,7 @@ function launchRecognizeStream(onData: (data: LongRunningRecognizeResponse) => v
                 minSpeakerCount: 2,
                 maxSpeakerCount: 2,
             },
-            model: "video"
+            model: "latest_long"
         },
         interimResults: false, // If you want interim results, set this to true
     })
